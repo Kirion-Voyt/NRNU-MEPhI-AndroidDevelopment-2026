@@ -1,18 +1,18 @@
 # 	Kotlin Koans
 
-##Introduction
-###Hello, world!
+## Introduction
+### Hello, world!
 ``` kotlin
 fun start(): String = "OK"
 ```
 
-###Named arguments
+### Named arguments
 ``` kotlin
 fun joinOptions(options: Collection<String>) =
  options.joinToString(", ", "[", "]")
 ```
 
-###Default arguments
+### Default arguments
 ``` kotlin
 fun foo(name: String, number: Int = 42, toUpperCase: Boolean = false) =
 	(if (toUpperCase) name.uppercase() else name) + number
@@ -25,7 +25,7 @@ fun useFoo() = listOf(
 )
 ```
 
-###Triple-quoted strings
+### Triple-quoted strings
 ``` kotlin
 const val question = "life, the universe, and everything"
 const val answer = 42
@@ -39,14 +39,14 @@ fun main() {
 }
 ```
 
-###String templates
+### String templates
 ``` kotlin
 val month = "(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)"
 
 fun getPattern(): String = """\d{2} $month \d{4}"""
 ```
 
-###Nullable types
+### Nullable types
 ``` kotlin
 fun sendMessageToClient(
     client: Client?, message: String?, mailer: Mailer
@@ -65,7 +65,7 @@ interface Mailer {
 }
 ```
 
-###Nothing type
+### Nothing type
 ``` kotlin
 import java.lang.IllegalArgumentException
 
@@ -83,14 +83,14 @@ fun main() {
 }
 ```
 
-###Lambdas
+### Lambdas
 ``` kotlin
 fun containsEven(collection: Collection<Int>): Boolean =
 	collection.any { it % 2 == 0 }
 ```
 
-##Classes
-###Data classes
+## Classes
+### Data classes
 ``` kotlin
 data class Person(val name: String, val age: Int)
 
@@ -105,7 +105,7 @@ fun comparePeople(): Boolean {
 }
 ```
 
-###Smart casts
+### Smart casts
 ``` kotlin
 fun eval(expr: Expr): Int =
 	when (expr) {
@@ -119,7 +119,7 @@ class Num(val value: Int) : Expr
 class Sum(val left: Expr, val right: Expr) : Expr
 ```
 
-###Sealed classes
+### Sealed classes
 ``` kotlin
 fun eval(expr: Expr): Int =
 	when (expr) {
@@ -132,7 +132,7 @@ class Num(val value: Int) : Expr
 class Sum(val left: Expr, val right: Expr) : Expr
 ```
 
-###Rename on import
+### Rename on import
 ``` kotlin
 import kotlin.random.Random as KRandom
 import java.util.Random as JRandom
@@ -146,7 +146,7 @@ fun useDifferentRandomClasses(): String {
 }
 ```
 
-###Extension functions
+### Extension functions
 ``` kotlin
 fun Int.r(): RationalNumber = RationalNumber(this, 1);
 
@@ -156,7 +156,8 @@ fun Pair<Int, Int>.r(): RationalNumber =
 data class RationalNumber(val numerator: Int, val denominator: Int)
 ```
 
-##Conventions
+## Conventions
+### Comparison
 ``` kotlin
 data class MyDate(val year: Int, val month: Int, val dayOfMonth: Int) :
 	Comparable<MyDate> {
@@ -181,39 +182,14 @@ fun test(date1: MyDate, date2: MyDate) {
 }
 ```
 
-###Comparison
-``` kotlin
-data class MyDate(val year: Int, val month: Int, val dayOfMonth: Int) :
-	Comparable<MyDate> {
-	override fun compareTo(other : MyDate) : Int {
-		if (this.dayOfMonth == other.dayOfMonth) {
-			if (this.month == other.month) {
-				if (this.year == other.year) {
-					return 0;
-				}
-
- 			return (this.year - other.year);
- 			}
-		return (this.month - other.month);
-		}
-	return (this.dayOfMonth - other.dayOfMonth);
-	}
-}
-
-fun test(date1: MyDate, date2: MyDate) {
-    // this code should compile:
-    println(date1 < date2)
-}
-```
-
-###Ranges
+### Ranges
 ``` kotlin
 fun checkInRange(date: MyDate, first: MyDate, last: MyDate): Boolean {
 	return date in first..last;
 }
 ```
 
-###For loop
+### For loop
 ``` kotlin
 class DateRange(val start: MyDate, val end: MyDate) : Iterable<MyDate> {
 	override fun iterator(): Iterator<MyDate> = object : Iterator<MyDate> {
@@ -237,7 +213,7 @@ fun iterateOverDateRange(firstDate: MyDate, secondDate: MyDate, handler: (MyDate
 }
 ```
 
-###Operators overloading
+### Operators overloading
 ``` kotlin
 import TimeInterval.*
 data class MyDate(val year: Int, val month: Int, val dayOfMonth: Int)
@@ -261,7 +237,7 @@ fun task2(today: MyDate): MyDate {
 }
 ```
 
-###Invoke
+### Invoke
 ``` kotlin
 class Invokable {
 	var numberOfInvocations: Int = 0
@@ -275,19 +251,230 @@ class Invokable {
 fun invokeTwice(invokable: Invokable) = invokable()()
 ```
 
-##Collections
-###Introduction
-  ####Hihanki
-###Sort
-###Filter map
-###All Any and other predicates
-###Associate
-###GroupBy
-###Partition
-###FlatMap
-###Max min
-###Sum
+## Collections
+### Introduction
+``` kotlin
+fun Shop.getSetOfCustomers(): Set<Customer> =
+        customers.toSet()
+```
+
+### Sort
+``` kotlin
+// Return a list of customers, sorted in the descending by number of orders they have made
+fun Shop.getCustomersSortedByOrders(): List<Customer> =
+        customers.sortedByDescending { it.orders.size }
+```
+
+### Filter map
+``` kotlin
+// Find all the different cities the customers are from
+fun Shop.getCustomerCities(): Set<City> =
+        customers.map { it.city }.toSet()
+
+// Find the customers living in a given city
+fun Shop.getCustomersFrom(city: City): List<Customer> =
+        customers.filter { it.city == city }
+```
+
+### All Any and other predicates
+``` kotlin
+// Return true if all customers are from a given city
+fun Shop.checkAllCustomersAreFrom(city: City): Boolean =
+        customers.all { it.city == city }
+
+// Return true if there is at least one customer from a given city
+fun Shop.hasCustomerFrom(city: City): Boolean =
+        customers.any { it.city == city }
+
+// Return the number of customers from a given city
+fun Shop.countCustomersFrom(city: City): Int =
+        customers.count { it.city == city }
+
+// Return a customer who lives in a given city, or null if there is none
+fun Shop.findCustomerFrom(city: City): Customer? =
+        customers.find { it.city == city }
+```
+
+### Associate
+``` kotlin
+// Build a map from the customer name to the customer
+fun Shop.nameToCustomerMap(): Map<String, Customer> =
+        customers.associateBy { it.name }
+
+// Build a map from the customer to their city
+fun Shop.customerToCityMap(): Map<Customer, City> =
+        customers.associateWith { it.city }
+
+// Build a map from the customer name to their city
+fun Shop.customerNameToCityMap(): Map<String, City> =
+        customers.associate { it.name to it.city }
+```
+
+### GroupBy
+``` kotlin
+// Build a map that stores the customers living in a given city
+fun Shop.groupCustomersByCity(): Map<City, List<Customer>> =
+        customers.groupBy { it.city }
+```
+
+### Partition
+``` kotlin
+// Return customers who have more undelivered orders than delivered
+fun Shop.getCustomersWithMoreUndeliveredOrders(): Set<Customer> = 
+    customers.filter { 
+        val (d, u) = it.orders.partition { it.isDelivered }
+            u.size > d.size }.toSet()
+```
+
+### FlatMap
+``` kotlin
+// Return all products the given customer has ordered
+fun Customer.getOrderedProducts(): List<Product> =
+        orders.flatMap(Order::products)
+
+// Return all products that were ordered by at least one customer
+fun Shop.getOrderedProducts(): Set<Product> =
+        customers.flatMap(Customer::getOrderedProducts).toSet()
+```
+
+### Max min
+``` kotlin
+// Return a customer who has placed the maximum amount of orders
+fun Shop.getCustomerWithMaxOrders(): Customer? =
+        customers.maxByOrNull { it.orders.size }
+
+// Return the most expensive product that has been ordered by the given customer
+fun getMostExpensiveProductBy(customer: Customer): Product? =
+        customer.orders.flatMap(
+            Order::products
+        ).maxByOrNull(
+            Product::price
+        )
+```
+
+### Sum
+``` kotlin
+// Return the sum of prices for all the products ordered by a given customer
+fun moneySpentBy(customer: Customer): Double =
+        customer.orders.flatMap(Order::products).sumOf { it.price }
+```
+
 ###Fold and reduce
-###Compound tasks
-###Sequences
-###Getting used to new style
+``` kotlin
+// Return the set of products that were ordered by all customers
+fun Shop.getProductsOrderedByAll(): Set<Product> =
+    customers.map(Customer::getOrderedProducts).reduce {
+        orderedByAll, customer ->
+        orderedByAll.intersect(customer)
+    }
+    
+fun Customer.getOrderedProducts(): Set<Product> =
+    orders.flatMap(Order::products).toSet()
+```
+
+### Compound tasks
+``` kotlin
+// Find the most expensive product among all the delivered products
+// ordered by the customer. Use `Order.isDelivered` flag.
+fun findMostExpensiveProductBy(customer: Customer): Product? =
+    customer.orders.filter(Order::isDelivered).flatMap(
+            Order::products
+        ).maxByOrNull(Product::price)
+
+// Count the amount of times a product was ordered.
+// Note that a customer may order the same product several times.
+fun Shop.getNumberOfTimesProductWasOrdered(product: Product): Int =
+    customers.flatMap(Customer::getOrderedProducts).count { it == product }
+
+fun Customer.getOrderedProducts(): List<Product> =
+        orders.flatMap(Order::products)
+```
+
+### Sequences
+``` kotlin
+// Find the most expensive product among all the delivered products
+// ordered by the customer. Use `Order.isDelivered` flag.
+fun findMostExpensiveProductBy(customer: Customer): Product? =
+    customer.orders.asSequence().filter(Order::isDelivered)
+        .flatMap(Order::products).maxByOrNull(Product::price)
+
+// Count the amount of times a product was ordered.
+// Note that a customer may order the same product several times.
+fun Shop.getNumberOfTimesProductWasOrdered(product: Product): Int =
+    customers.asSequence().flatMap(Customer::getOrderedProducts)
+        .count { it == product }
+
+fun Customer.getOrderedProducts(): Sequence<Product> =
+        orders.asSequence().flatMap(Order::products)
+```
+
+### Getting used to new style
+``` kotlin
+fun doSomethingWithCollection(collection: Collection<String>): Collection<String>? {
+
+    val groupsByLength = collection.groupBy { s -> s.length }
+
+    val maximumSizeOfGroup = groupsByLength.values
+        .map { group -> group.size }.maxOrNull()
+
+    return groupsByLength.values
+        .firstOrNull { group -> group.size == maximumSizeOfGroup}
+}
+```
+
+## Properties
+### Properties
+``` kotlin
+class PropertyExample() {
+    var counter = 0
+    var propertyWithCounter: Int? = null
+        set(v) {
+            field = v
+            counter++
+        }
+}
+```
+
+### Lazy property
+``` kotlin
+class LazyProperty(val initializer: () -> Int) {
+    var value: Int? = null
+    val lazy: Int
+        get() {
+            if (value == null) { value = initializer() }
+            return value!!
+        }
+}
+```
+
+### Delegates examples
+``` kotlin
+import kotlin.reflect.KProperty
+
+class LazyProperty(val initializer: () -> Int) {
+    val lazyValue: Int by lazy { initializer() }
+}
+```
+
+### Delegates how it works
+``` kotlin
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
+
+class D {
+    var date: MyDate by EffectiveDate()
+}
+
+class EffectiveDate<R> : ReadWriteProperty<R, MyDate> {
+
+    var timeInMillis: Long? = null
+
+    override fun getValue(thisRef: R, property: KProperty<*>): MyDate {
+        return timeInMillis!!.toDate()
+    }
+
+    override fun setValue(thisRef: R, property: KProperty<*>, value: MyDate) {
+       	timeInMillis = value.toMillis()
+    }
+}
+```
